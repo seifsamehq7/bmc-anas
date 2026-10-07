@@ -1,0 +1,295 @@
+.hero {
+  --sp: 0;
+  position: relative;
+  height: 100svh;
+  min-height: 620px;
+  padding: clamp(8px, 1vw, 14px);
+}
+
+/* The rounded frame eases back as the visitor leaves the hero. */
+.frame {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--r-xl);
+  background: var(--deep);
+  color: #fff;
+  transform: scale(calc(1 - var(--sp) * 0.07));
+  transform-origin: 50% 0%;
+  will-change: transform;
+}
+
+.media {
+  position: absolute;
+  inset: -4% 0;
+  transform: translate3d(0, calc(var(--sp) * 12%), 0) scale(calc(1.06 - var(--sp) * 0.04));
+  will-change: transform;
+}
+
+.img {
+  object-fit: cover;
+  object-position: 60% 50%;
+}
+
+/* In Arabic the photo mirrors, so the scanner sits opposite the text. */
+:global(html[dir="rtl"]) .img {
+  transform: scaleX(-1);
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(6, 26, 46, 0.9) 0%, rgba(6, 26, 46, 0.66) 34%, rgba(6, 26, 46, 0.12) 72%, rgba(6, 26, 46, 0.05) 100%),
+    linear-gradient(0deg, rgba(6, 26, 46, 0.75) 0%, rgba(6, 26, 46, 0) 38%);
+}
+
+:global(html[dir="rtl"]) .scrim {
+  background:
+    linear-gradient(270deg, rgba(6, 26, 46, 0.9) 0%, rgba(6, 26, 46, 0.66) 34%, rgba(6, 26, 46, 0.12) 72%, rgba(6, 26, 46, 0.05) 100%),
+    linear-gradient(0deg, rgba(6, 26, 46, 0.75) 0%, rgba(6, 26, 46, 0) 38%);
+}
+
+.crescents {
+  position: absolute;
+  width: clamp(300px, 42vw, 680px);
+  inset-inline-end: -14%;
+  bottom: -34%;
+  opacity: 0.3;
+  mix-blend-mode: screen;
+  overflow: visible;
+  transform: rotate(calc(var(--sp) * 40deg));
+  transform-origin: 60% 50%;
+}
+
+:global(html[dir="rtl"]) .crescents {
+  transform: scaleX(-1) rotate(calc(var(--sp) * 40deg));
+}
+
+.crescents path {
+  transform-box: view-box;
+  transform-origin: 691px 529px;
+  animation: crescent-breathe 9s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -3s);
+}
+
+@keyframes crescent-breathe {
+  from {
+    transform: rotate(-6deg);
+  }
+  to {
+    transform: rotate(6deg);
+  }
+}
+
+.content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(18px, 2.4vh, 28px);
+  padding-top: 80px;
+  padding-bottom: 120px;
+  opacity: calc(1 - var(--sp) * 1.6);
+  transform: translate3d(0, calc(var(--sp) * -80px), 0);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+:global(html[lang="en"]) .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+}
+
+.dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-mint);
+}
+
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--c-mint);
+  opacity: 0;
+  animation: pulse 3.2s var(--ease-out) infinite;
+  animation-delay: -1s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.title {
+  max-width: 13ch;
+  text-shadow: 0 2px 30px rgba(6, 26, 46, 0.35);
+}
+
+/* The second line carries the brand gradient, word by word. */
+.title :global(.line:last-child .wi) {
+  background: var(--grad-bright);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  padding-bottom: 0.06em;
+}
+
+.lead {
+  max-width: 46ch;
+  font-size: clamp(1.05rem, 1vw + 0.7rem, 1.3rem);
+  line-height: 1.75;
+  color: rgba(242, 247, 252, 0.84);
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.chips {
+  position: absolute;
+  bottom: clamp(20px, 4vh, 36px);
+  inset-inline-start: var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: calc(100% - 2 * var(--gutter) - 120px);
+  opacity: calc(1 - var(--sp) * 2);
+}
+
+.chips li {
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.cue {
+  position: absolute;
+  bottom: clamp(18px, 4vh, 34px);
+  inset-inline-end: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: calc(1 - var(--sp) * 3);
+}
+
+.cueRing {
+  position: relative;
+  width: 34px;
+  height: 52px;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+}
+
+.cueDot {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--c-mint);
+  animation: cue 2.4s var(--ease-io) infinite;
+}
+
+@keyframes cue {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(22px);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    min-height: 600px;
+  }
+
+  .content {
+    justify-content: flex-end;
+    padding-bottom: 150px;
+  }
+
+  .scrim,
+  :global(html[dir="rtl"]) .scrim {
+    background: linear-gradient(0deg, rgba(6, 26, 46, 0.94) 0%, rgba(6, 26, 46, 0.7) 45%, rgba(6, 26, 46, 0.2) 100%);
+  }
+
+  .img {
+    object-position: 72% 50%;
+  }
+
+  .cueLabel {
+    display: none;
+  }
+
+  .chips {
+    max-width: calc(100% - 2 * var(--gutter) - 50px);
+  }
+
+  .chips li:last-child {
+    display: none;
+  }
+}
+
+@media (max-height: 560px) {
+  .chips,
+  .cue {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .media,
+  .content,
+  .crescents {
+    transform: none;
+  }
+
+  :global(html[dir="rtl"]) .crescents {
+    transform: scaleX(-1);
+  }
+}

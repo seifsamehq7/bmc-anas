@@ -1,0 +1,131 @@
+.page {
+  display: grid;
+  gap: 18px;
+  max-width: 1500px;
+  margin-inline: auto;
+}
+
+.title {
+  padding-top: 8px;
+  font-size: clamp(1.9rem, 2.8vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.card {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 14px;
+  min-height: min(68vh, 620px);
+  padding: clamp(28px, 5vw, 64px);
+  border-radius: 30px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(12, 129, 228, 0.08), transparent 55%),
+    #fff;
+  box-shadow: 0 1px 2px rgba(15, 49, 76, 0.04), 0 18px 40px -26px rgba(15, 49, 76, 0.25);
+}
+
+.lens {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 150px;
+  aspect-ratio: 1;
+  margin-bottom: 12px;
+}
+
+.rings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rings :global(circle) {
+  fill: none;
+  stroke: url(#bmc-ring-grad);
+  stroke-linecap: round;
+}
+
+.rings :global(.orbit) {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+}
+
+.rings :global(.orbit-1) {
+  animation: spin 9s linear infinite;
+}
+
+.rings :global(.orbit-2) {
+  animation: spin 13s linear infinite reverse;
+}
+
+.rings :global(.orbit-3) {
+  animation: spin 17s linear infinite;
+}
+
+.rings :global(.orbit-1 circle) {
+  stroke-width: 3;
+}
+
+.rings :global(.orbit-2 circle) {
+  stroke-width: 2;
+  opacity: 0.7;
+}
+
+.rings :global(.orbit-3 circle) {
+  stroke-width: 1.4;
+  opacity: 0.5;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.core {
+  display: grid;
+  place-items: center;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: var(--c-navy);
+  background: radial-gradient(circle, #fff 55%, #e8f0f7);
+  box-shadow: 0 16px 40px -18px rgba(12, 129, 228, 0.6);
+}
+
+.core svg {
+  width: 40%;
+  height: 40%;
+}
+
+.badge {
+  padding: 5px 14px;
+  border-radius: var(--r-pill);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.heading {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.text {
+  max-width: 46ch;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rings :global(.orbit) {
+    animation: none;
+  }
+}

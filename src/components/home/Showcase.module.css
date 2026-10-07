@@ -1,0 +1,567 @@
+/* ==========================================================================
+   Machines showcase. Pinned by default; the static gates below switch it to
+   a stacked list. The gate list matches GATES in Showcase.tsx exactly.
+   ========================================================================== */
+
+.section {
+  position: relative;
+  margin-top: calc(var(--r-xl) * -1);
+  border-radius: var(--r-xl);
+  isolation: isolate;
+  overflow: clip;
+}
+
+.intro {
+  padding-top: var(--section);
+  padding-bottom: clamp(24px, 6vh, 64px);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+.title {
+  max-width: 18ch;
+}
+
+.intro :global(.lead) {
+  margin-inline: auto;
+}
+
+/* ---------- Pinned track ---------- */
+.track {
+  --lens: min(70vh, 44vw);
+  position: relative;
+  height: calc(var(--n) * 100vh + 100vh);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.glows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.glow {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 4%;
+  width: calc(var(--lens) * 1.9);
+  aspect-ratio: 1;
+  margin-top: calc(var(--lens) * -0.95);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--tone) 42%, transparent) 0%, transparent 62%);
+  opacity: 0;
+}
+
+.glow:first-child {
+  opacity: 1;
+}
+
+/* Text column on the start side, lens on the end side; RTL mirrors it for free. */
+.ringLayer,
+.item {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  padding: 90px var(--gutter) 110px;
+  max-width: 1480px;
+  margin-inline: auto;
+}
+
+.ringSlot {
+  grid-column: 2;
+  display: grid;
+  place-items: center;
+}
+
+.ringSlot > * {
+  grid-area: 1 / 1;
+}
+
+/* One calm white lens stays in place; only the machines change inside it. */
+.sharedDisc {
+  width: var(--lens);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #ffffff 64%, #edf3f9 84%, #d9e6f2 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 40px 120px -30px rgba(12, 129, 228, 0.55);
+}
+
+.ring {
+  --f: 0;
+  width: calc(var(--lens) * 1.12);
+  aspect-ratio: 1;
+}
+
+.ringSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+:global(html[dir="rtl"]) .ringSvg {
+  transform: scaleX(-1);
+}
+
+.ringSvg :global(circle),
+.ownRings :global(circle) {
+  fill: none;
+  stroke: url(#bmc-ring-grad);
+  stroke-linecap: round;
+}
+
+.ringSvg :global(.orbit),
+.ownRings :global(.orbit) {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+}
+
+.ringSvg :global(.orbit-1 circle) {
+  stroke-width: 2;
+}
+
+.ringSvg :global(.orbit-2 circle) {
+  stroke-width: 1.3;
+  opacity: 0.7;
+}
+
+.ringSvg :global(.orbit-3 circle) {
+  stroke-width: 0.9;
+  opacity: 0.5;
+}
+
+/* The orbit turns with the scroll: each machine is one step around the circle. */
+.ringSvg :global(.orbit-1) {
+  transform: rotate(calc(var(--f) * 51.43deg));
+}
+
+.ringSvg :global(.orbit-2) {
+  transform: rotate(calc(var(--f) * -38deg));
+}
+
+.ringSvg :global(.orbit-3) {
+  transform: rotate(calc(var(--f) * 24deg));
+}
+
+.item {
+  --e: 0;
+  --x: 0;
+  --v: calc(var(--e) * (1 - var(--x)));
+  pointer-events: none;
+}
+
+.item[data-live] {
+  pointer-events: auto;
+}
+
+.media {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.text {
+  grid-column: 1;
+  grid-row: 1;
+  max-width: 560px;
+}
+
+.lens {
+  position: relative;
+  width: var(--lens);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.ownRings {
+  display: none;
+}
+
+.disc {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  opacity: var(--v);
+  transform: translate3d(0, calc((1 - var(--e)) * 9% - var(--x) * 7%), 0)
+    scale(calc(0.8 + 0.2 * var(--e) + 0.06 * var(--x)));
+  will-change: transform, opacity;
+}
+
+.img {
+  position: relative;
+  width: auto;
+  height: auto;
+  max-width: 76%;
+  max-height: 60%;
+  -webkit-mask:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-composite: source-in;
+  mask:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  mask-composite: intersect;
+}
+
+/* Text lines assemble in reading order as --e rises, and lift away on exit. */
+/* The outgoing copy clears (by x = 0.4) before the incoming copy starts (e = 0.35),
+   so two machines never read on top of each other. The first machine is already settled. */
+.ln {
+  --t: clamp(0, calc((var(--e) - 0.35 - var(--j) * 0.06) * 2.8), 1);
+  opacity: calc(var(--t) * (1 - var(--x) * 2.5));
+  transform: translate3d(0, calc((1 - var(--t)) * 40px - var(--x) * 40px), 0);
+}
+
+.item:first-of-type .ln {
+  --t: 1;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.idx {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--on-deep-2);
+}
+
+.abbr {
+  padding: 6px 16px;
+  border-radius: var(--r-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.name {
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #fff;
+}
+
+:global(html[lang="ar"]) .name {
+  line-height: 1.4;
+}
+
+.tagline {
+  margin-top: 14px;
+  font-size: clamp(1.1rem, 1.3vw, 1.35rem);
+  font-weight: 500;
+  color: var(--c-mint);
+}
+
+.desc {
+  margin-top: 14px;
+  max-width: 52ch;
+  color: var(--on-deep-2);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-block: 26px 28px;
+}
+
+.facts li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(169, 190, 211, 0.16);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--on-deep);
+}
+
+.facts svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: var(--c-cyan);
+}
+
+.facts small {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.76rem;
+  color: var(--on-deep-2);
+}
+
+/* ---------- HUD: progress ring and the jump rail ---------- */
+.hud {
+  --p: 0;
+  position: absolute;
+  bottom: clamp(18px, 4vh, 36px);
+  inset-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 1480px;
+  margin-inline: auto;
+}
+
+.counter {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.counter small {
+  font-size: 0.7rem;
+  color: var(--on-deep-2);
+}
+
+.counterRing {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.counterRing circle {
+  fill: none;
+  stroke-width: 2.4;
+}
+
+.counterTrack {
+  stroke: rgba(169, 190, 211, 0.2);
+}
+
+.counterBar {
+  stroke: url(#bmc-ring-grad);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--p));
+}
+
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.railBtn {
+  min-height: 40px;
+  padding-inline: 14px;
+  border-radius: var(--r-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--on-deep-2);
+  box-shadow: inset 0 0 0 1px rgba(169, 190, 211, 0.24);
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+
+.railBtn:hover {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(169, 190, 211, 0.6);
+}
+
+.railBtn[data-active] {
+  color: var(--deep);
+  background: var(--on-deep);
+  box-shadow: none;
+}
+
+/* Short screens (laptops at 720-860px tall): tighten the copy so it always clears the rail. */
+@media (max-height: 860px) {
+  .meta {
+    margin-bottom: 12px;
+  }
+
+  .name {
+    font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  }
+
+  .tagline,
+  .desc {
+    margin-top: 10px;
+  }
+
+  .desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .facts {
+    margin-block: 18px 20px;
+  }
+
+  .facts li {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-height: 700px) {
+  .desc {
+    display: none;
+  }
+}
+
+/* Narrow landscape: the facts stack, each on one compact line (label, then value). */
+@media (max-width: 1100px) {
+  .facts {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .facts li {
+    align-items: center;
+    padding: 8px 14px;
+  }
+
+  .facts svg {
+    margin-top: 0;
+  }
+
+  .facts small {
+    display: inline;
+    margin: 0;
+    margin-inline-end: 8px;
+  }
+}
+
+/* ---------- Static gates: phones, portrait tablets, coarse portrait,
+   landscape phones, and reduced motion get a calm stacked list. ---------- */
+@media (max-width: 720px),
+  (orientation: portrait) and (max-width: 1024px),
+  (orientation: portrait) and (pointer: coarse),
+  (orientation: landscape) and (pointer: coarse) and (max-height: 560px),
+  (prefers-reduced-motion: reduce) {
+  .track {
+    height: auto;
+    padding-bottom: var(--section);
+  }
+
+  .stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+    display: grid;
+    gap: clamp(72px, 12vw, 120px);
+    padding-top: 24px;
+  }
+
+  .glows,
+  .ringLayer,
+  .hud {
+    display: none;
+  }
+
+  .item {
+    position: relative;
+    inset: auto;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 0 var(--gutter);
+    pointer-events: auto;
+    --e: 1;
+    --x: 0;
+  }
+
+  .media,
+  .text {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .text {
+    max-width: 640px;
+  }
+
+  .lens {
+    width: min(76vw, 500px);
+    margin-block: 6vw;
+  }
+
+  .ownRings {
+    display: block;
+    position: absolute;
+    inset: -6%;
+    width: 112%;
+    height: 112%;
+    overflow: visible;
+  }
+
+  :global(html[dir="rtl"]) .ownRings {
+    transform: scaleX(-1);
+  }
+
+  .ownRings :global(.orbit-1 circle) {
+    stroke-width: 2;
+  }
+
+  .ownRings :global(.orbit-2 circle) {
+    stroke-width: 1.3;
+    opacity: 0.7;
+  }
+
+  .ownRings :global(.orbit-3 circle) {
+    stroke-width: 0.9;
+    opacity: 0.5;
+  }
+
+  .disc {
+    background: radial-gradient(circle, #ffffff 0%, #ffffff 64%, #edf3f9 84%, #d9e6f2 100%);
+    box-shadow: 0 30px 90px -30px color-mix(in srgb, var(--tone) 70%, transparent);
+  }
+
+  .disc,
+  .ln {
+    opacity: 1;
+    transform: none;
+  }
+
+  .facts {
+    grid-template-columns: 1fr;
+  }
+
+  .desc {
+    display: block;
+  }
+}
+
+/* Mirrors the pinned layout without JS. */
+.track[data-mode="static"] .item {
+  --e: 1;
+  --x: 0;
+}

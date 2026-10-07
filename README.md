@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BMC | Barakat Medcare Center website
 
-## Getting Started
+Front end only, built with Next.js 16. Arabic is the default language (`/ar`), with a full English version (`/en`).
+The full site plan is in [PLAN.md](PLAN.md).
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000/ar
+npm run build && npm run start   # production preview
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| What | File |
+|---|---|
+| All Arabic copy | `src/content/dictionaries/ar.ts` |
+| All English copy | `src/content/dictionaries/en.ts` |
+| The 8 machines and exams (text, photo, prep, duration) | `src/content/machines.ts` |
+| The scans patients book: 8 departments, 32 scan types (from barakatmc.com) | `src/content/scans.ts` |
+| Phone, WhatsApp, address, hours (placeholders now), booking demo flag | `src/content/site.ts` |
+| Booking store (localStorage now, swap for an API later) | `src/lib/bookings.ts` |
+| Dashboard sample data (swap for an API later) | `src/lib/dashboard-data.ts` |
+| Colors, type, buttons, fade-ins, loader | `src/app/globals.css` |
+| Machine photos (GE HealthCare) | `src/assets/machines/` |
+| Brand guide backgrounds (pages 2, 9, 10, 12) | `src/assets/brand/` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Pages
 
-## Learn More
+- Website (`src/app/[lang]/(site)/`): home, `/machines`, `/machines/[slug]`, `/about`, `/booking` (department chooser), `/booking/radiology` (4-step booking: department, then the exact scan), `/booking/oncology` (coming soon).
+- Dashboard (`src/app/[lang]/dashboard/`): overview, plus bookings, calendar, finances, settings, clients and admins (coming soon). The dashboard loader plays when someone walks in (from the website, or by opening a dashboard link), never on reload or between sections (`src/lib/dash-intro.ts`).
 
-To learn more about Next.js, take a look at the following resources:
+## Brand fonts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Araboto** (Arabic) and **Nexa Slab** (English and numbers) are self-hosted from `src/fonts/`, subset to the characters the site uses (about 22 KB per weight).
+Araboto carries only Arabic glyphs, so Latin letters and digits inside Arabic text automatically use Nexa Slab.
+Confirm both licenses allow web embedding.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Motion and accessibility
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Smooth scrolling with Lenis. Every section fades in; everything animates with transform and opacity only.
+- Phones, portrait tablets and visitors with "reduce motion" get a calm stacked layout instead of the pinned showcase.
+- The intro loader shows once per browser session.
+- After it, a welcome popup asks which department the visitor needs (radiology goes to its booking page, oncology shows "coming soon"). It asks once per browser session, using a session cookie, so new tabs stay quiet and it asks again only after the browser is closed (`src/lib/welcome.ts`).

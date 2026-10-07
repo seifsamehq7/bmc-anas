@@ -1,0 +1,195 @@
+.steps {
+  --draw: 0;
+}
+
+:global(html:not(.js)) .steps {
+  --draw: 1;
+}
+
+.head {
+  display: grid;
+  gap: 16px;
+  max-width: 760px;
+}
+
+/* ---------- Desktop: four orbs riding a hand-drawn wave ---------- */
+.board {
+  position: relative;
+  margin-top: clamp(48px, 7vw, 96px);
+  height: calc(clamp(170px, 18vw, 240px) + 210px);
+}
+
+.wave {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  width: 100%;
+  height: clamp(170px, 18vw, 240px);
+  overflow: visible;
+}
+
+:global(html[dir="rtl"]) .wave {
+  transform: scaleX(-1);
+}
+
+.wave path {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.track {
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-dasharray: 0.004 0.012;
+}
+
+.line {
+  stroke: url(#bmc-ring-grad);
+  stroke-width: 3;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw));
+}
+
+.list {
+  position: absolute;
+  inset: 0;
+}
+
+.step {
+  /* Each orb lights once the drawn line reaches it. */
+  --on: clamp(0, calc((var(--draw) - var(--at)) * 14 + 1), 1);
+  position: absolute;
+  top: calc(var(--y) * clamp(170px, 18vw, 240px) / 100);
+  inset-inline-start: calc(var(--x) * 1%);
+  width: 23%;
+  transform: translate3d(-50%, -32px, 0);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+:global(html[dir="rtl"]) .step {
+  transform: translate3d(50%, -32px, 0);
+}
+
+.node {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px var(--line),
+    var(--shadow-1);
+  transform: scale(calc(0.7 + 0.3 * var(--on)));
+}
+
+.node::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--grad-bright);
+  opacity: var(--on);
+}
+
+.nodeNum {
+  position: relative;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.copy {
+  opacity: calc(0.25 + 0.75 * var(--on));
+  transform: translate3d(0, calc((1 - var(--on)) * 18px), 0);
+}
+
+.title {
+  font-size: clamp(1.3rem, 1.6vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.text {
+  margin-top: 8px;
+  color: var(--ink-2);
+  max-width: 30ch;
+  margin-inline: auto;
+}
+
+/* ---------- Narrow screens: a vertical thread down the start edge ---------- */
+@media (max-width: 860px) {
+  .board {
+    height: auto;
+  }
+
+  .wave {
+    display: none;
+  }
+
+  .list {
+    position: relative;
+    display: grid;
+    gap: 36px;
+  }
+
+  .list::before,
+  .list::after {
+    content: "";
+    position: absolute;
+    top: 32px;
+    bottom: 32px;
+    inset-inline-start: 31px;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--line);
+  }
+
+  .list::after {
+    background: var(--grad-bright);
+    transform-origin: top;
+    transform: scaleY(var(--draw));
+  }
+
+  .step {
+    --at: 0;
+    position: relative;
+    top: auto;
+    inset-inline-start: auto;
+    width: auto;
+    transform: none;
+    grid-template-columns: 64px 1fr;
+    justify-items: start;
+    text-align: start;
+    gap: 20px;
+  }
+
+  :global(html[dir="rtl"]) .step {
+    transform: none;
+  }
+
+  .step:nth-child(2) {
+    --at: 0.3;
+  }
+
+  .step:nth-child(3) {
+    --at: 0.6;
+  }
+
+  .step:nth-child(4) {
+    --at: 0.9;
+  }
+
+  .node {
+    z-index: 1;
+  }
+
+  .text {
+    margin-inline: 0;
+  }
+}

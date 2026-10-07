@@ -1,0 +1,698 @@
+/* ==========================================================================
+   Dashboard shell. Same brand, calmer register: a dark full-height sidebar
+   flush to the edge, a light working canvas, and white cards with generous radii.
+   ========================================================================== */
+
+.shell {
+  --side-w: 288px;
+  --pad: clamp(12px, 1.4vw, 18px);
+  --dash-canvas: #eef3f8;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--side-w) minmax(0, 1fr);
+  min-height: 100svh;
+  background: var(--dash-canvas);
+}
+
+/* ---------- Intro loader (shown while <html> carries dash-intro, see lib/dash-intro) ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  place-items: center;
+  align-content: center;
+  gap: 28px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(12, 129, 228, 0.28), transparent 50%),
+    var(--deep);
+  color: var(--on-deep);
+  clip-path: circle(150% at 50% 50%);
+}
+
+:global(html.dash-intro) .intro {
+  display: grid;
+}
+
+/* Leaving: the dark field closes into a point while the dashboard settles behind it. */
+:global(html.dash-leaving) .intro {
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 0.9s var(--ease-io);
+}
+
+.introCore {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(58vmin, 380px);
+  aspect-ratio: 1;
+}
+
+:global(html.dash-leaving) .introCore {
+  transform: scale(0.82);
+  opacity: 0;
+  transition:
+    transform 0.6s var(--ease-io),
+    opacity 0.4s ease;
+}
+
+.introRing {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.introRing circle {
+  fill: none;
+  stroke: url(#bmc-ring-grad);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: intro-ring 1.4s var(--ease-io) forwards 0.1s;
+}
+
+@keyframes intro-ring {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.introLogo {
+  width: 70%;
+  overflow: visible;
+}
+
+/* The crescents keep turning like a scanner while the letters settle. */
+.introCrescent {
+  transform-box: view-box;
+  transform-origin: 691px 529px;
+  animation:
+    intro-crescent-in 0.9s var(--ease-out) both,
+    intro-spin 1.6s var(--ease-io) 0.5s infinite;
+  animation-delay: calc(var(--i) * 0.1s), calc(1s + var(--i) * 0.1s);
+}
+
+@keyframes intro-crescent-in {
+  from {
+    opacity: 0;
+    transform: rotate(-160deg) scale(0.8);
+  }
+}
+
+@keyframes intro-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  60%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.introLetter {
+  animation: intro-letter 0.8s var(--ease-out) both;
+  animation-delay: calc(0.35s + var(--i) * 0.08s);
+}
+
+@keyframes intro-letter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+}
+
+.introText {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: var(--on-deep-2);
+  animation: intro-letter 0.8s var(--ease-out) both 0.5s;
+}
+
+.introBar {
+  position: relative;
+  width: 160px;
+  height: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(169, 190, 211, 0.18);
+}
+
+.introBar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--grad-bright);
+  transform-origin: left;
+  animation: intro-bar 1.4s var(--ease-io) forwards;
+}
+
+:global(html[dir="rtl"]) .introBar::after {
+  transform-origin: right;
+}
+
+@keyframes intro-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Sidebar: one solid panel, full height, flush to the edge ---------- */
+/* The panel paints the color and the arcs; the column inside scrolls on its own,
+   so a short screen can always reach the last link. */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  z-index: 40;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 120% 110%, rgba(17, 196, 212, 0.22), transparent 45%),
+    radial-gradient(circle at -20% -10%, rgba(12, 129, 228, 0.25), transparent 40%),
+    var(--deep);
+  color: var(--on-deep);
+}
+
+.side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 26px 16px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.side::-webkit-scrollbar {
+  display: none;
+}
+
+/* Two faint brand arcs rising from the bottom corner. */
+.sidebar::before,
+.sidebar::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  border: 1.5px solid rgba(169, 190, 211, 0.1);
+  pointer-events: none;
+}
+
+.sidebar::before {
+  width: 420px;
+  height: 420px;
+  inset-inline-end: -230px;
+  bottom: -190px;
+}
+
+.sidebar::after {
+  width: 300px;
+  height: 300px;
+  inset-inline-end: -170px;
+  bottom: -130px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 10px 22px;
+  color: #fff;
+}
+
+.brandLogo {
+  width: 94px;
+  height: auto;
+}
+
+.brandLabel {
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--on-deep-2);
+  box-shadow: inset 0 0 0 1px rgba(169, 190, 211, 0.28);
+}
+
+.nav {
+  position: relative;
+  flex: 1;
+}
+
+.nav ul {
+  position: relative;
+  display: grid;
+  gap: 6px;
+}
+
+/* The active pill slides between items. Each item is 52px tall with a 6px gap. */
+.indicator {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 52px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform: translate3d(0, calc(var(--y) * 58px), 0);
+  transition: transform 0.6s var(--ease-out);
+}
+
+.indicator::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  inset-inline-start: 0;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--grad-bright);
+}
+
+.navItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 52px;
+  padding-inline: 16px 12px;
+  border-radius: 18px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: var(--on-deep-2);
+  transition: color 0.3s ease;
+}
+
+.navItem svg {
+  flex: none;
+  width: 21px;
+  height: 21px;
+}
+
+.navItem:hover,
+.navItem[aria-current="page"] {
+  color: #fff;
+}
+
+.navItem[aria-current="page"] svg {
+  color: var(--c-mint);
+}
+
+.soon {
+  margin-inline-start: auto;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--on-deep-2);
+  background: rgba(169, 190, 211, 0.12);
+}
+
+.sideFoot {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(169, 190, 211, 0.16);
+}
+
+.me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+}
+
+.me strong {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.me small {
+  font-size: 0.78rem;
+  color: var(--on-deep-2);
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.avatar svg {
+  width: 20px;
+  height: 20px;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding-inline: 14px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--on-deep);
+  background: rgba(255, 255, 255, 0.06);
+  transition: background-color 0.3s ease;
+}
+
+.back:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.back svg {
+  width: 19px;
+  height: 19px;
+  color: var(--c-mint);
+}
+
+:global(html[dir="rtl"]) .back svg {
+  transform: scaleX(-1);
+}
+
+/* ---------- Top bar and content ---------- */
+.main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: var(--pad) clamp(14px, 2vw, 28px);
+  background: color-mix(in srgb, var(--dash-canvas) 82%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  max-width: 460px;
+  min-height: 50px;
+  padding-inline: 18px;
+  border-radius: var(--r-pill);
+  color: var(--ink-3);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 49, 76, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.search:focus-within {
+  box-shadow:
+    0 0 0 2px var(--c-blue),
+    0 0 0 6px rgba(12, 129, 228, 0.12);
+}
+
+.search svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.search input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+}
+
+.topActions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+
+.demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #7a4d00;
+  background: #fff4dc;
+}
+
+.demoDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d18a00;
+}
+
+.iconBtn,
+.menuBtn {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 49, 76, 0.05);
+  transition: transform 0.5s var(--ease-out);
+}
+
+/* The drawer button only exists on narrow screens. */
+.menuBtn {
+  display: none;
+}
+
+.iconBtn:hover,
+.menuBtn:hover {
+  transform: translateY(-2px);
+}
+
+.iconBtn svg,
+.menuBtn svg {
+  width: 21px;
+  height: 21px;
+}
+
+.bellDot {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 13px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c-cyan);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.content {
+  flex: 1;
+  padding: 6px clamp(14px, 2vw, 28px) 40px;
+}
+
+.content:focus {
+  outline: none;
+}
+
+/* ---------- Entrance: the frame settles once, sections settle every visit ----------
+   While the loader covers the screen everything waits, hidden. Before React takes over,
+   the html class does the hiding; after, the missing data-ready does. */
+:global(html.dash-intro:not(.dash-leaving)) .sidebar,
+:global(html.dash-intro:not(.dash-leaving)) .main,
+.shell:not([data-ready]) .sidebar,
+.shell:not([data-ready]) .topbar,
+.shell:not([data-ready]) .nav li,
+.shell:not([data-ready]) .sideFoot {
+  opacity: 0;
+}
+
+/* The sidebar slides in from its edge, then its links drop into place one by one. */
+.shell[data-ready] .sidebar {
+  animation: side-in 1s var(--ease-out) both;
+}
+
+.shell[data-ready] .brand {
+  animation: item-in 0.8s var(--ease-out) both 0.3s;
+}
+
+.shell[data-ready] .nav li {
+  animation: item-in 0.8s var(--ease-out) both;
+  animation-delay: calc(0.36s + var(--i) * 0.06s);
+}
+
+.shell[data-ready] .indicator {
+  animation: indicator-in 0.9s var(--ease-out) both 0.75s;
+}
+
+.shell[data-ready] .sideFoot {
+  animation: item-in 0.8s var(--ease-out) both 0.8s;
+}
+
+.shell[data-ready] .topbar {
+  animation: top-in 0.9s var(--ease-out) both 0.18s;
+}
+
+@keyframes side-in {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+:global(html[dir="rtl"]) .shell[data-ready] .sidebar {
+  animation-name: side-in-rtl;
+}
+
+@keyframes side-in-rtl {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes top-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -28px, 0);
+  }
+}
+
+@keyframes item-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+}
+
+@keyframes indicator-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--y) * 58px), 0) scaleX(0.4);
+  }
+}
+
+/* Page sections mark their pieces with .enter and --i; each one flies up and settles. */
+.shell:not([data-ready]) :global(.enter) {
+  opacity: 0;
+}
+
+.shell[data-ready] :global(.enter) {
+  transform-origin: 50% 100%;
+  animation: enter 1.05s var(--ease-settle) backwards;
+  animation-delay: calc(0.3s + var(--i, 0) * 0.09s);
+}
+
+@keyframes enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 56px, 0) scale(0.94);
+  }
+  45% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Narrow screens: the sidebar becomes a drawer ---------- */
+.scrim {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: min(320px, 88vw);
+    transform: translate3d(-110%, 0, 0);
+    transition: transform 0.6s var(--ease-io);
+    z-index: 60;
+  }
+
+  :global(html[dir="rtl"]) .sidebar {
+    transform: translate3d(110%, 0, 0);
+  }
+
+  .shell[data-nav-open] .sidebar,
+  :global(html[dir="rtl"]) .shell[data-nav-open] .sidebar {
+    transform: none;
+  }
+
+  .shell[data-ready] .sidebar,
+  .shell:not([data-ready]) .sidebar {
+    animation: none;
+    opacity: 1;
+  }
+
+  .scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(6, 26, 46, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .shell[data-nav-open] .scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .menuBtn {
+    display: grid;
+  }
+}
+
+@media (max-width: 640px) {
+  .demo {
+    display: none;
+  }
+
+  .search {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell[data-ready] .sidebar,
+  .shell[data-ready] .topbar,
+  .shell[data-ready] .brand,
+  .shell[data-ready] .nav li,
+  .shell[data-ready] .indicator,
+  .shell[data-ready] .sideFoot,
+  .shell[data-ready] :global(.enter) {
+    animation: none;
+  }
+}

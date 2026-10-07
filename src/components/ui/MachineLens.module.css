@@ -1,0 +1,114 @@
+.lens {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.rings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+:global(html[dir="rtl"]) .rings {
+  transform: scaleX(-1);
+}
+
+.rings :global(circle) {
+  fill: none;
+  stroke: url(#bmc-ring-grad);
+  stroke-linecap: round;
+}
+
+.rings :global(.orbit-1) circle {
+  stroke-width: 2.4;
+}
+
+.rings :global(.orbit-2) circle {
+  stroke-width: 1.6;
+  opacity: 0.75;
+}
+
+.rings :global(.orbit-3) circle {
+  stroke-width: 1.1;
+  opacity: 0.55;
+}
+
+.rings :global(.orbit) {
+  transform-origin: 100px 100px;
+  transform-box: view-box;
+}
+
+.idle .rings :global(.orbit-1) {
+  animation: orbit-spin 48s linear infinite;
+  animation-delay: -6s;
+}
+
+.idle .rings :global(.orbit-2) {
+  animation: orbit-spin 64s linear infinite reverse;
+  animation-delay: -20s;
+}
+
+.idle .rings :global(.orbit-3) {
+  animation: orbit-spin 80s linear infinite;
+  animation-delay: -33s;
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The disc: a bright clinical room seen through the lens.
+   The photo multiplies into it, so the white studio background disappears. */
+.disc {
+  position: relative;
+  width: 80%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  isolation: isolate;
+  background: radial-gradient(circle at 50% 38%, #ffffff 0%, #f4f8fc 46%, #e2ecf5 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+    0 30px 80px -20px color-mix(in srgb, var(--tone) 55%, transparent);
+}
+
+.disc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 -18px 40px -18px rgba(15, 49, 76, 0.18);
+  pointer-events: none;
+}
+
+/* The photo keeps its own shape (so the mask feathers its real edges)
+   and stays inside the circle at any aspect ratio. */
+.disc {
+  display: grid;
+  place-items: center;
+}
+
+.img {
+  position: relative;
+  width: auto;
+  height: auto;
+  max-width: 80%;
+  max-height: 64%;
+  mix-blend-mode: multiply;
+  -webkit-mask:
+    linear-gradient(to right, transparent, #000 5%, #000 95%, transparent),
+    linear-gradient(to bottom, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-composite: source-in;
+  mask:
+    linear-gradient(to right, transparent, #000 5%, #000 95%, transparent),
+    linear-gradient(to bottom, transparent, #000 5%, #000 95%, transparent);
+  mask-composite: intersect;
+  transition: transform 1.2s var(--ease-out);
+}

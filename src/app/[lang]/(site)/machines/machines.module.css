@@ -1,0 +1,134 @@
+.gridSection {
+  padding-bottom: calc(var(--section) * 0.6);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.card {
+  position: relative;
+  display: grid;
+  gap: 24px;
+  height: 100%;
+  padding: clamp(22px, 2.6vw, 34px);
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  transition:
+    transform 0.8s var(--ease-out),
+    box-shadow 0.8s var(--ease-out);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2);
+}
+
+.lens {
+  width: 82%;
+  margin-inline: auto;
+}
+
+.card:hover .lens img {
+  transform: scale(1.05);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink-3);
+}
+
+.abbr {
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.cardTitle {
+  font-size: clamp(1.35rem, 1.6vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.cardTag {
+  margin-top: 6px;
+  color: var(--ink-2);
+}
+
+.arrow {
+  position: absolute;
+  top: clamp(20px, 2.4vw, 30px);
+  inset-inline-end: clamp(20px, 2.4vw, 30px);
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition:
+    transform 0.7s var(--ease-out),
+    background-color 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+:global(html[dir="rtl"]) .arrow svg {
+  transform: scaleX(-1);
+}
+
+.card:hover .arrow {
+  color: var(--deep);
+  background: var(--grad-bright);
+  box-shadow: none;
+  transform: rotate(-45deg);
+}
+
+:global(html[dir="rtl"]) .card:hover .arrow {
+  transform: rotate(45deg);
+}
+
+/* Seven cards: the last row centers its single card. */
+@media (min-width: 1101px) {
+  .grid > li:last-child:nth-child(3n + 1) {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid > li:last-child:nth-child(2n + 1) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, calc(50% - 14px));
+  }
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid > li:last-child:nth-child(2n + 1) {
+    width: 100%;
+  }
+}

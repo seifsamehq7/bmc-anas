@@ -1,0 +1,119 @@
+.manifesto {
+  padding-bottom: calc(var(--section) + var(--r-xl));
+}
+
+.statement {
+  --p: 1;
+  margin-top: clamp(24px, 3vw, 40px);
+  max-width: 24ch;
+  font-size: clamp(2rem, 4.3vw, 4.1rem);
+  line-height: 1.32;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+:global(html[lang="ar"]) .statement {
+  max-width: 26ch;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+:global(html.js) .statement {
+  --p: 0;
+}
+
+.word {
+  --w: clamp(0, calc(var(--p) * (var(--n) + 2) - var(--i)), 1);
+  opacity: calc(0.16 + 0.84 * var(--w));
+  color: var(--ink);
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(56px, 8vw, 110px);
+}
+
+.pillar {
+  position: relative;
+  padding: clamp(26px, 3vw, 40px);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* A slow halo drifts inside each card: one living element per section. */
+.pillar::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 70%;
+  aspect-ratio: 1;
+  inset-inline-end: -25%;
+  top: -35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(17, 196, 212, 0.16), transparent 66%);
+  animation: halo 14s ease-in-out infinite alternate;
+}
+
+.pillar:nth-child(2)::before {
+  background: radial-gradient(circle, rgba(12, 129, 228, 0.14), transparent 66%);
+  animation-delay: -5s;
+}
+
+.pillar:nth-child(3)::before {
+  background: radial-gradient(circle, rgba(79, 231, 175, 0.18), transparent 66%);
+  animation-delay: -9s;
+}
+
+@keyframes halo {
+  to {
+    transform: translate3d(-30%, 40%, 0) scale(1.2);
+  }
+}
+
+.orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin-bottom: 26px;
+}
+
+.orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--grad-bright);
+  -webkit-mask: radial-gradient(circle, transparent 29px, #000 30px);
+  mask: radial-gradient(circle, transparent 29px, #000 30px);
+}
+
+.orbNum {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--c-navy);
+}
+
+.pillarTitle {
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pillarText {
+  margin-top: 10px;
+  color: var(--ink-2);
+}
+
+@media (max-width: 860px) {
+  .pillars {
+    grid-template-columns: 1fr;
+  }
+}

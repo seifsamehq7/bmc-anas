@@ -1,0 +1,272 @@
+.section {
+  padding-top: 0;
+}
+
+.frame {
+  --h: 0;
+  --fw: 1200px;
+  --fh: 720px;
+  --L: 1400px;
+  /* Lens scale: a small sharp peek at rest, the whole frame when complete. */
+  --s: calc(0.14 + 0.86 * var(--h));
+  position: relative;
+  height: min(86vh, 820px);
+  min-height: 560px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--deep);
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.blurred,
+.sharp {
+  position: absolute;
+  overflow: hidden;
+}
+
+.blurred {
+  inset: -40px;
+}
+
+.blurred .img {
+  filter: blur(18px) saturate(0.8);
+  transform: scale(1.05);
+}
+
+.img {
+  object-fit: cover;
+  object-position: 45% 50%;
+}
+
+.lensWrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--L);
+  height: var(--L);
+  margin-top: calc(var(--L) / -2);
+  margin-left: calc(var(--L) / -2);
+  pointer-events: none;
+}
+
+.lens {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: scale(var(--s));
+  will-change: transform;
+}
+
+/* Counter-scaled, so the sharp photo stays still while the lens grows around it. */
+.sharp {
+  top: 50%;
+  left: 50%;
+  width: var(--fw);
+  height: var(--fh);
+  transform: translate3d(-50%, -50%, 0) scale(calc(1 / var(--s)));
+  will-change: transform;
+}
+
+.edge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: scale(var(--s));
+  opacity: calc(1 - var(--h) * var(--h));
+}
+
+.edge circle {
+  fill: none;
+  stroke: var(--c-mint);
+  stroke-width: 2;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6, 26, 46, 0.86) 0%, rgba(6, 26, 46, 0.3) 34%, rgba(6, 26, 46, 0.1) 55%, rgba(6, 26, 46, 0.82) 100%);
+}
+
+.top {
+  position: absolute;
+  top: clamp(28px, 5vw, 56px);
+  inset-inline: clamp(24px, 5vw, 64px);
+  display: grid;
+  gap: 12px;
+  max-width: 720px;
+}
+
+.top :global(.kicker) {
+  color: var(--c-mint);
+}
+
+.title {
+  color: #fff;
+}
+
+.lead {
+  color: rgba(242, 247, 252, 0.82);
+  max-width: 44ch;
+}
+
+/* ---------- The hold button ---------- */
+.hold {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 132px;
+  height: 132px;
+  margin: -66px 0 0 -66px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  transition:
+    opacity 0.6s ease,
+    transform 0.8s var(--ease-out);
+}
+
+.hold:disabled {
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+
+.holdRing {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.holdRing circle {
+  fill: none;
+  stroke-width: 3;
+}
+
+.holdTrack {
+  stroke: rgba(255, 255, 255, 0.28);
+}
+
+.holdBar {
+  stroke: var(--c-mint);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--h));
+}
+
+.holdCore {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  transform: scale(calc(1 - var(--h) * 0.12));
+}
+
+/* An invitation pulse while idle. */
+.holdCore::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(79, 231, 175, 0.7);
+  animation: invite 2.8s var(--ease-out) infinite;
+  animation-delay: -0.8s;
+}
+
+.frame[data-state="holding"] .holdCore::after {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes invite {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.holdLabel {
+  position: relative;
+  max-width: 96px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+/* ---------- Completed state ---------- */
+.done {
+  position: absolute;
+  bottom: clamp(28px, 5vw, 56px);
+  inset-inline: clamp(24px, 5vw, 64px);
+  display: grid;
+  gap: 10px;
+  max-width: 640px;
+}
+
+.done > * {
+  animation: done-rise 1.1s var(--ease-out) both;
+}
+
+.done > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.done > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes done-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+}
+
+.doneTitle {
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.doneText {
+  color: rgba(242, 247, 252, 0.84);
+}
+
+.doneActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.reset {
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .frame {
+    height: 88svh;
+    min-height: 640px;
+  }
+
+  .lead {
+    display: none;
+  }
+}

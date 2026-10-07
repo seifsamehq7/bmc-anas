@@ -1,0 +1,1291 @@
+.flow {
+  width: min(100% - 2 * var(--gutter), 1240px);
+  margin-inline: auto;
+  scroll-margin-top: 110px;
+}
+
+/* ---------- Stepper: four orbs on one line ---------- */
+.stepper {
+  --p: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.stepper::before,
+.stepper::after {
+  content: "";
+  position: absolute;
+  top: 23px;
+  inset-inline: 12.5%;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--line);
+}
+
+.stepper::after {
+  background: var(--grad-bright);
+  transform: scaleX(var(--p));
+  transform-origin: left;
+  transition: transform 0.9s var(--ease-out);
+}
+
+:global(html[dir="rtl"]) .stepper::after {
+  transform-origin: right;
+}
+
+.stepper li {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.stepDot {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-weight: 700;
+  color: var(--ink-3);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--line);
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    box-shadow 0.5s ease,
+    transform 0.6s var(--ease-out);
+}
+
+.stepDot:disabled {
+  cursor: default;
+}
+
+.stepDot svg {
+  width: 20px;
+  height: 20px;
+}
+
+[data-state="current"] .stepDot {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: 0 0 0 6px rgba(12, 129, 228, 0.16);
+  transform: scale(1.06);
+}
+
+[data-state="done"] .stepDot {
+  color: var(--deep);
+  background: var(--grad-bright);
+  box-shadow: none;
+}
+
+[data-state="done"] .stepDot:hover {
+  transform: scale(1.08);
+}
+
+.stepLabel {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+[data-state="current"] .stepLabel {
+  color: var(--ink);
+}
+
+/* ---------- The stage card ---------- */
+.stage {
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+
+.panel {
+  --dx: 1;
+  padding: clamp(22px, 4vw, 48px);
+  min-height: 420px;
+  animation: panel-in 0.75s var(--ease-out) both;
+}
+
+:global(html[dir="rtl"]) .panel {
+  --dx: -1;
+}
+
+.panel[data-dir="-1"] {
+  --dx: -1;
+}
+
+:global(html[dir="rtl"]) .panel[data-dir="-1"] {
+  --dx: 1;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(var(--dx) * 48px), 0, 0);
+  }
+}
+
+.panelHead {
+  display: grid;
+  gap: 8px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.panelTitle {
+  font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.panelLead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  border-radius: var(--r-pill);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--deep);
+  background: var(--grad-bright);
+  white-space: nowrap;
+}
+
+/* ---------- Step 1: departments, then the scans inside one ---------- */
+
+/* A row of lenses, one per department. Scrolls sideways on small screens. */
+.groups {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: clamp(16px, 2.4vw, 24px);
+}
+
+.group {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  padding: 16px 8px 14px;
+  border-radius: 26px;
+  text-align: center;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px transparent;
+  animation: rise 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 45ms);
+  transition:
+    transform 0.6s var(--ease-out),
+    background-color 0.45s ease,
+    color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+}
+
+.group:hover {
+  transform: translateY(-3px);
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1.5px var(--line),
+    var(--shadow-1);
+}
+
+.group[aria-selected="true"] {
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--tone) 45%, transparent), transparent 70%),
+    var(--deep);
+  box-shadow: 0 22px 40px -22px rgba(6, 26, 46, 0.75);
+  transform: translateY(-3px);
+}
+
+.groupLens {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  aspect-ratio: 1;
+  margin-bottom: 4px;
+}
+
+.groupRings {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  overflow: visible;
+}
+
+:global(html[dir="rtl"]) .groupRings {
+  transform: scaleX(-1);
+}
+
+.groupRings :global(circle) {
+  fill: none;
+  stroke: url(#bmc-ring-grad);
+  stroke-linecap: round;
+}
+
+.groupRings :global(.orbit) {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  transition: transform 1.2s var(--ease-out);
+}
+
+.groupRings :global(.orbit-1 circle) {
+  stroke-width: 4;
+}
+
+.groupRings :global(.orbit-2 circle) {
+  stroke-width: 2.6;
+  opacity: 0.6;
+}
+
+.groupRings :global(.orbit-3) {
+  display: none;
+}
+
+.group:hover .groupRings :global(.orbit-1),
+.group[aria-selected="true"] .groupRings :global(.orbit-1) {
+  transform: rotate(140deg);
+}
+
+.group:hover .groupRings :global(.orbit-2),
+.group[aria-selected="true"] .groupRings :global(.orbit-2) {
+  transform: rotate(-90deg);
+}
+
+.groupMark {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--c-navy);
+  background: radial-gradient(circle at 30% 25%, #fff, #eaf2f9);
+  box-shadow: 0 10px 22px -12px color-mix(in srgb, var(--tone) 80%, transparent);
+  transition:
+    color 0.45s ease,
+    background 0.45s ease;
+}
+
+.group[aria-selected="true"] .groupMark {
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.groupName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.groupCount {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  transition: color 0.45s ease;
+}
+
+.group[aria-selected="true"] .groupCount {
+  color: var(--on-deep-2);
+}
+
+/* A small mint dot marks the department that holds the chosen scan. */
+.groupPicked {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-mint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-mint) 30%, transparent);
+}
+
+/* The open department: a summary on one side, its scans on the other. */
+.groupPanel {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.36fr) minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 22px);
+  align-items: start;
+}
+
+.groupInfo {
+  position: sticky;
+  top: 120px;
+  display: grid;
+  gap: 12px;
+  padding: clamp(20px, 2.4vw, 28px);
+  border-radius: 30px;
+  overflow: hidden;
+  color: var(--on-deep);
+  background:
+    radial-gradient(circle at 110% 115%, color-mix(in srgb, var(--tone) 40%, transparent), transparent 55%),
+    radial-gradient(circle at -10% -15%, rgba(12, 129, 228, 0.3), transparent 45%),
+    var(--deep);
+  animation: info-in 0.8s var(--ease-out) both;
+}
+
+/* Two faint brand arcs behind the summary. */
+.groupInfo::before,
+.groupInfo::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(169, 190, 211, 0.14);
+  pointer-events: none;
+}
+
+.groupInfo::before {
+  width: 280px;
+  height: 280px;
+  inset-inline-end: -150px;
+  bottom: -150px;
+}
+
+.groupInfo::after {
+  width: 200px;
+  height: 200px;
+  inset-inline-end: -110px;
+  bottom: -110px;
+}
+
+@keyframes info-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.98);
+  }
+}
+
+.spec {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.spec i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.groupTitle {
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.groupSummary {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--on-deep-2);
+}
+
+.groupFacts {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(169, 190, 211, 0.16);
+}
+
+.groupFacts div {
+  display: grid;
+  gap: 2px;
+  padding: 8px 0;
+}
+
+.groupFacts dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: var(--on-deep-2);
+}
+
+.groupFacts dt svg {
+  width: 16px;
+  height: 16px;
+  color: var(--c-mint);
+}
+
+.groupFacts dd {
+  margin: 0;
+  padding-inline-start: 24px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* The scans: one card per scan, chosen like a radio. */
+.scans {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 14px);
+}
+
+.scans > li {
+  animation: rise 0.7s var(--ease-out) both;
+  animation-delay: calc(0.08s + var(--i) * 60ms);
+}
+
+.scan {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 18px 20px 16px;
+  border-radius: 26px;
+  text-align: start;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px transparent;
+  transition:
+    transform 0.6s var(--ease-out),
+    box-shadow 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.scan:hover {
+  transform: translateY(-3px);
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1.5px var(--line),
+    var(--shadow-1);
+}
+
+.scan[aria-pressed="true"] {
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 2px var(--c-blue),
+    0 18px 40px -18px rgba(12, 129, 228, 0.55);
+}
+
+.scanIndex {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--c-navy);
+  background: #fff;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tone) 45%, #fff);
+  transition:
+    color 0.4s ease,
+    background 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.scan[aria-pressed="true"] .scanIndex {
+  color: var(--deep);
+  background: var(--grad-bright);
+  box-shadow: none;
+}
+
+.scanName {
+  padding-inline-end: 34px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.scanUse {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.scanMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.scanTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-inline-end: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.scanTime svg {
+  width: 15px;
+  height: 15px;
+  color: var(--c-blue);
+}
+
+.flag {
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--c-navy);
+  background: rgba(12, 129, 228, 0.1);
+}
+
+.flag[data-flag="fasting"] {
+  color: #7a4d00;
+  background: #fff1d6;
+}
+
+.flag[data-flag="bladder"] {
+  color: #0f5f6b;
+  background: rgba(17, 196, 212, 0.14);
+}
+
+.check {
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--deep);
+  background: var(--grad-bright);
+  transform: scale(0);
+  transition: transform 0.5s var(--ease-out);
+}
+
+.check svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scan[aria-pressed="true"] .check {
+  transform: scale(1);
+}
+
+/* The chosen scan, echoed beside the Next button. */
+.picked {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  animation: rise 0.6s var(--ease-out) both;
+}
+
+.picked > span:last-child {
+  display: grid;
+  min-width: 0;
+}
+
+.picked small {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+}
+
+.picked strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.pickedTick {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.pickedTick svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 1180px) {
+  .groups {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .groupPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .groupInfo {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Phones scroll up and down only: the departments stack as compact two-column rows. */
+  .groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .group {
+    grid-template-columns: 46px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 0;
+    padding: 12px;
+    border-radius: 22px;
+    text-align: start;
+  }
+
+  .group:hover,
+  .group[aria-selected="true"] {
+    transform: none;
+  }
+
+  .groupLens {
+    grid-row: 1 / span 2;
+    width: 46px;
+    margin: 0;
+  }
+
+  .groupMark {
+    font-size: 0.7rem;
+  }
+
+  .groupName {
+    align-self: end;
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
+
+  .groupCount {
+    align-self: start;
+    font-size: 0.7rem;
+  }
+
+  .groupPicked {
+    top: 8px;
+    inset-inline-end: 8px;
+  }
+
+  .scans {
+    grid-template-columns: 1fr;
+  }
+
+  .picked small {
+    display: none;
+  }
+}
+
+/* ---------- Step 2: days and times ---------- */
+.days {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px 4px 14px;
+  margin-inline: -4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.day {
+  flex: none;
+  scroll-snap-align: start;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 86px;
+  padding: 14px 6px;
+  border-radius: 26px;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px transparent;
+  animation: rise 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 30ms);
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.5s var(--ease-out);
+}
+
+.day:hover {
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transform: translateY(-3px);
+}
+
+.day[aria-checked="true"] {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: 0 14px 30px -14px rgba(12, 78, 140, 0.7);
+}
+
+.dayName {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.dayNum {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.dayMonth {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 36px);
+  margin-top: 22px;
+}
+
+.slotGroup {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.slotGroup legend {
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  min-height: 52px;
+  padding: 6px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  font-size: 0.92rem;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  animation: rise 0.6s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 25ms);
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.slot:not(:disabled):hover {
+  box-shadow: inset 0 0 0 1.5px var(--c-blue);
+}
+
+.slot[aria-pressed="true"] {
+  color: var(--deep);
+  background: var(--grad-bright);
+  box-shadow: none;
+}
+
+.slot:disabled {
+  cursor: not-allowed;
+  color: var(--ink-3);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  opacity: 0.55;
+}
+
+.slot:disabled span {
+  text-decoration: line-through;
+}
+
+.slot small {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* ---------- Step 3: details ---------- */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 22px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field > span,
+.choice legend {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 20px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition:
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.field input[dir="ltr"] {
+  text-align: start;
+}
+
+:global(html[dir="rtl"]) .field input[dir="ltr"] {
+  text-align: right;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 2px var(--c-blue),
+    0 0 0 5px rgba(12, 129, 228, 0.12);
+}
+
+.field[data-invalid] input {
+  box-shadow: inset 0 0 0 2px #c2413b;
+}
+
+.field em {
+  min-height: 1.3em;
+  font-style: normal;
+  font-size: 0.85rem;
+  color: #b3362f;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.choice {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice legend {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.pill {
+  position: relative;
+  cursor: pointer;
+}
+
+.pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding-inline: 22px;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.pill input:checked + span {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: none;
+}
+
+.pill input:focus-visible + span {
+  outline: 2px solid var(--c-cyan);
+  outline-offset: 3px;
+}
+
+/* ---------- Step 4: review ---------- */
+.review {
+  display: grid;
+  border-radius: var(--r-lg);
+  background: var(--canvas);
+  padding: 6px clamp(16px, 3vw, 28px);
+}
+
+.reviewRow {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.6fr) 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.reviewRow:last-child {
+  border-bottom: 0;
+}
+
+.reviewRow dt {
+  font-size: 0.9rem;
+  color: var(--ink-3);
+}
+
+.reviewRow dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+:global(html[dir="rtl"]) .reviewRow dd[dir="ltr"] {
+  text-align: right;
+}
+
+.editLink {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--c-navy);
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+}
+
+.editLink:hover {
+  background: rgba(12, 129, 228, 0.08);
+}
+
+.demo {
+  margin-top: 16px;
+  font-size: 0.86rem;
+  color: var(--ink-3);
+}
+
+/* ---------- Action bar ---------- */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px clamp(22px, 4vw, 48px);
+  border-top: 1px solid var(--line);
+  background: rgba(242, 246, 250, 0.6);
+}
+
+.actions :global(.btn:disabled) {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- Confirmation ---------- */
+.success {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: clamp(32px, 5vw, 64px) clamp(18px, 4vw, 48px);
+  border-radius: var(--r-xl);
+  text-align: center;
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+}
+
+.tick {
+  width: 88px;
+  height: 88px;
+}
+
+.tick circle,
+.tick path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.tick circle {
+  stroke: url(#bmc-ring-grad);
+  stroke-width: 4;
+  animation: draw 1s var(--ease-out) forwards;
+}
+
+.tick path {
+  stroke: var(--c-blue);
+  stroke-width: 5;
+  animation: draw 0.6s var(--ease-out) forwards 0.6s;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.successTitle {
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+  animation: rise 0.8s var(--ease-out) both 0.3s;
+}
+
+.successText {
+  color: var(--ink-2);
+  animation: rise 0.8s var(--ease-out) both 0.4s;
+}
+
+/* The ticket: notched at the perforation, the brand's curve cut into a card. */
+.ticket {
+  --cut: 30%;
+  display: grid;
+  grid-template-columns: 30% 70%;
+  width: min(100%, 620px);
+  margin-top: 14px;
+  border-radius: var(--r-lg);
+  text-align: start;
+  background: var(--deep);
+  color: var(--on-deep);
+  -webkit-mask:
+    radial-gradient(circle 14px at var(--cut) 0, transparent 97%, #000),
+    radial-gradient(circle 14px at var(--cut) 100%, transparent 97%, #000);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle 14px at var(--cut) 0, transparent 97%, #000),
+    radial-gradient(circle 14px at var(--cut) 100%, transparent 97%, #000);
+  mask-composite: intersect;
+  animation: rise 0.9s var(--ease-out) both 0.5s;
+}
+
+:global(html[dir="rtl"]) .ticket {
+  --cut: 70%;
+}
+
+.stub {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 2px;
+  padding: 22px 10px;
+  border-inline-end: 2px dashed rgba(169, 190, 211, 0.35);
+}
+
+.stubDay {
+  font-family: var(--font-en);
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stubMonth {
+  font-size: 0.9rem;
+  color: var(--on-deep-2);
+}
+
+.stubTime {
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--deep);
+  background: var(--grad-bright);
+}
+
+.ticketBody {
+  padding: 22px clamp(18px, 3vw, 28px);
+}
+
+.ticketRefLabel {
+  font-size: 0.8rem;
+  color: var(--on-deep-2);
+}
+
+.ticketRef {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.ticketMeta {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ticketMeta div {
+  display: grid;
+  gap: 0;
+}
+
+.ticketMeta dt {
+  font-size: 0.78rem;
+  color: var(--on-deep-2);
+}
+
+.ticketMeta dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.prep {
+  width: min(100%, 620px);
+  margin-top: 10px;
+  padding: 22px clamp(18px, 3vw, 28px);
+  border-radius: var(--r-lg);
+  text-align: start;
+  background: var(--canvas);
+  animation: rise 0.9s var(--ease-out) both 0.65s;
+}
+
+.prepTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.prep ol {
+  display: grid;
+  gap: 10px;
+}
+
+.prep li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--ink-2);
+}
+
+.prep li > span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.successActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+@media (max-width: 760px) {
+  .slots,
+  .fields {
+    grid-template-columns: 1fr;
+  }
+
+  .stepLabel {
+    font-size: 0.8rem;
+  }
+
+  .reviewRow {
+    grid-template-columns: 1fr auto;
+  }
+
+  .reviewRow dt {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticket {
+    grid-template-columns: 1fr;
+    -webkit-mask: none;
+    mask: none;
+  }
+
+  .stub {
+    border-inline-end: 0;
+    border-bottom: 2px dashed rgba(169, 190, 211, 0.35);
+  }
+}
+
+/* Phones: the 14 days wrap into a grid, so nothing needs a sideways swipe. */
+@media (max-width: 640px) {
+  .days {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+    padding: 4px;
+    scroll-snap-type: none;
+  }
+
+  .day {
+    width: auto;
+    padding: 12px 4px;
+    border-radius: 22px;
+  }
+}

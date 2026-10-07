@@ -1,0 +1,191 @@
+.header {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 120;
+  padding: clamp(10px, 1.6vw, 18px) clamp(10px, 2vw, 22px);
+  pointer-events: none;
+  color: #fff;
+}
+
+/* At the top the bar floats clear over the dark hero.
+   Once the page moves it becomes a soft glass pill. */
+.bar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-inline: auto;
+  max-width: 1480px;
+  padding-block: 8px;
+  padding-inline: clamp(14px, 2vw, 26px) 8px;
+  border-radius: var(--r-pill);
+  background: rgba(242, 246, 250, 0);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0);
+  transition:
+    background-color 0.6s var(--ease-out),
+    box-shadow 0.6s var(--ease-out),
+    color 0.4s ease,
+    transform 0.8s var(--ease-out);
+}
+
+.header[data-scrolled] .bar {
+  color: var(--ink);
+  background: rgba(242, 246, 250, 0.82);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(15, 49, 76, 0.07),
+    0 12px 40px rgba(15, 49, 76, 0.1);
+}
+
+/* With the side panel open the bar steps back and only the close button stays. */
+.header[data-open] .bar {
+  color: #fff;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.header[data-open] .brand,
+.header[data-open] .lang,
+.header[data-open] .cta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.brand {
+  display: block;
+  color: inherit;
+  transition: opacity 0.4s ease;
+}
+
+.logo {
+  height: clamp(36px, 3.4vw, 46px);
+  width: auto;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang,
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition:
+    background-color 0.4s ease,
+    box-shadow 0.4s ease,
+    opacity 0.4s ease;
+}
+
+.lang {
+  width: 48px;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+
+.lang:hover {
+  background: rgba(127, 160, 190, 0.18);
+}
+
+.cta {
+  padding-inline: 22px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.header[data-scrolled] .cta {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: none;
+}
+
+.cta:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.header[data-scrolled] .cta:hover {
+  background: var(--c-navy);
+}
+
+/* The three dashes. They fold into a cross when the panel opens. */
+.menu {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--grad-bright);
+  color: var(--deep);
+  transition: transform 0.7s var(--ease-out);
+}
+
+.menu:hover {
+  transform: rotate(90deg);
+}
+
+.dash {
+  position: absolute;
+  inset-inline-start: 17px;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 0.6s var(--ease-out),
+    opacity 0.3s ease,
+    width 0.5s var(--ease-out);
+}
+
+.dash:nth-child(1) {
+  transform: translateY(-7px);
+}
+
+.dash:nth-child(2) {
+  width: 15px;
+}
+
+.dash:nth-child(3) {
+  transform: translateY(7px);
+}
+
+.menu:hover .dash:nth-child(2) {
+  width: 22px;
+}
+
+.header[data-open] .dash:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.header[data-open] .dash:nth-child(2) {
+  opacity: 0;
+}
+
+.header[data-open] .dash:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 640px) {
+  .cta {
+    display: none;
+  }
+
+  .menu {
+    width: 50px;
+    height: 50px;
+  }
+
+  .dash {
+    inset-inline-start: 14px;
+  }
+}

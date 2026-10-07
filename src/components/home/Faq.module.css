@@ -1,0 +1,113 @@
+.faq {
+  padding-top: 0;
+}
+
+.inner {
+  display: grid;
+  justify-items: center;
+}
+
+.head {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+
+.list {
+  width: min(100%, 860px);
+  display: grid;
+  gap: 12px;
+}
+
+.item {
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
+  transition:
+    box-shadow 0.5s var(--ease-out),
+    background-color 0.5s ease;
+}
+
+.item[open] {
+  box-shadow:
+    0 0 0 1px rgba(12, 129, 228, 0.25),
+    var(--shadow-1);
+}
+
+.q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 72px;
+  padding: 18px clamp(20px, 3vw, 32px);
+  font-size: clamp(1.05rem, 1.2vw, 1.22rem);
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+  list-style: none;
+}
+
+.q::-webkit-details-marker {
+  display: none;
+}
+
+.q:focus-visible {
+  border-radius: var(--r-lg);
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition:
+    transform 0.6s var(--ease-out),
+    background-color 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.item[open] .icon {
+  transform: rotate(135deg);
+  color: var(--deep);
+  background: var(--grad-bright);
+  box-shadow: none;
+}
+
+/* Opening eases its height where the browser supports animating to auto. */
+.item::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.6s var(--ease-out),
+    content-visibility 0.6s allow-discrete;
+}
+
+.item[open]::details-content {
+  block-size: auto;
+}
+
+.a {
+  padding: 0 clamp(20px, 3vw, 32px) 24px;
+  color: var(--ink-2);
+  max-width: 68ch;
+}
+
+.note {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--ink-3);
+}
